@@ -1,0 +1,43 @@
+alias d='dirs -v | tail +2'
+for index ({1..9}) alias "$index"="cd +${index}"; unset index
+
+alias git='LANG="en_US.UTF-8" git'
+alias slrn='TERM=xterm-256color slrn'
+alias mutt='TERM=xterm-256color mutt'
+alias vi='TERM=xterm-256color vim'
+alias view='TERM=xterm-256color view'
+alias vless='TERM=xterm-256color '$vimdir'/macros/less.sh'
+
+alias tclsh='rlwrap tclsh'
+alias sbcl='rlwrap sbcl'
+
+alias grep='grep --color=auto'
+alias grepc='grep --color=auto -n -C2'
+alias psgrep='ps -al | grep'
+alias fhdr='find /usr/include -name "*.h" | xargs grep -n '
+alias rgrep='find . -type f | xargs grep -n '
+alias h='fc -l -10'
+alias hg='fc -l -$HISTSIZE | grep '
+alias man='man -P less'
+alias ctags='find . \( -name "*.cpp" -o -name "*.c" -o -name "*.pc" -o -name "*.h" \) | etags -'
+alias jtags='find . -name "*.java" | etags -'
+alias pytags='find . -name "*.py" | etags -'
+alias whence='whereis'
+alias asn1dump='openssl asn1parse -i -dump <'
+alias asn1dump_der='openssl asn1parse -i -inform DER -dump <'
+alias pem2der='openssl x509 -inform PEM -outform DER -in '
+alias der2pem='openssl x509 -inform DER -outform PEM -in '
+alias aiff2mp3='find . -name "*.aiff" -exec basename {} ".aiff" \; | tr "\012" "\000" | xargs -0 -I{} -0 ffmpeg -i {}.aiff -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 {}.mp3'
+alias octave='octave --force-gui'
+
+if [ $(uname) = "FreeBSD" ]; then
+   vimdir=$(ls -1dr /usr/local/share/vim/vim[0-9]* | head -1)
+
+   alias ls='ls -G'
+elif [ $(uname) = "Linux" ]; then
+   vimdir=$(ls -1dr /usr/share/vim/vim[0-9]* | head -1)
+
+   alias ls='ls --color'
+   alias watchf='iwatch -e all_events '
+   alias execnr='setarch i386 -RL '
+fi

@@ -1,0 +1,409 @@
+function hexenc() {
+   xxd -g0 $1 | cut -d' ' -f2 | tr -d '\012'
+}
+
+function hexdec() {
+   sed -n 's/.\{32\}/&\n/gp' $1 | nl -i 16 -s ':' -v 0 | awk -F':' '{printf("%08x: %s\n",$1,$2)}' | xxd -r -g0 -c16
+}
+
+function md5() {
+   script="
+import sys
+import md5
+sys.stdout.write(md5.md5(sys.stdin.read().rstrip('\n')).digest())"
+   if [[ -n $1 ]]; then
+      echo $1 | python -c $script
+   else
+      python -c $script
+   fi
+}
+
+function b64enc() {
+   if [[ -n $1 ]]; then
+      echo $1 |\
+   python -c "
+import sys
+import base64
+print base64.b64encode(sys.stdin.read().rstrip('\n'))"
+   else
+   python -c "
+import sys
+import base64
+print base64.b64encode(sys.stdin.read().rstrip('\n'))"
+   fi
+}
+
+function b64dec() {
+   if [[ -n $1 ]]; then
+      echo $1 |\
+   python -c "
+import sys
+import base64
+print base64.b64decode(sys.stdin.read())"
+   else
+   python -c "
+import sys
+import base64
+print base64.b64decode(sys.stdin.read())"
+   fi
+}
+
+function hexcalc() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "obase=16;ibase=16"; echo $v | tr "[a-z]" "[A-Z]") | bc
+}
+
+function hex2dec() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "ibase=16;"; echo $v | tr "[a-z]" "[A-Z]") | bc
+}
+
+function dec2hex() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "obase=16;"; echo $v) | bc
+}
+
+function dec2bin() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "obase=2;"; echo $v) | bc
+}
+
+function oct2dec() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "ibase=8;"; echo $v | tr "[a-z]" "[A-Z]") | bc
+}
+
+function dec2oct() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "obase=8;"; echo $v) | bc
+}
+
+function hex2bin() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "ibase=16;obase=2;"; echo $v | tr "[a-z]" "[A-Z]") | bc
+}
+
+function bin2hex() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "obase=16;ibase=2;"; echo $v) | bc
+}
+
+function bin2dec() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   (echo "obase=10;ibase=2;"; echo $v) | bc
+}
+
+function asc2hex() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   echo -n $v | od -tx1 | sed 's/^[0-9]*//' | tr -d "\012" | sed 's/ *//g'
+}
+
+function hex2asc() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+
+   echo -n $v | sed 's/.\{32\}/&\n/g' | nl -i 16 -s ':' -v 0 | awk -F':' '{printf("%08x: %s\n",$1,$2)}' | xxd -c 16 -r
+}
+
+function declist2asc() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+
+   echo -n $v | tr , '\n' | while read x; do echo $x | dec2hex; done  | tr -d '\n' | hex2asc
+}
+
+function rotl() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   echo $v | sed 's/^\(.\)\(.*\)$/\2\1/'
+}
+
+function rotr() {
+   if [[ -n $1 ]]; then
+      v=$1;
+   else 
+      read v
+   fi
+   echo $v | sed 's/^\(.*\)\(.\)$/\2\1/'
+}
+
+# displays characters that use 8 bits
+function 8bitchrs() {
+  if [[ $# -ne 1 ]]; then
+     echo "Usage: 8bitchrs <file>"
+     return
+  fi
+  cat $1 | tr -d '\001-\177' | od -cx
+}
+
+function gdb_thread() {
+  if [[ $# -ne 2 ]]; then
+     echo "Usage: gdb_thread <pid> <thread-id>"
+     return
+  fi
+
+  script=/tmp/$$.$RANDOM.gdb
+  cat <<_END_ > $script
+set pagination off
+info thread $2
+thread $2
+bt
+detach
+quit
+_END_
+
+  gdb -pid $1 -batch -x $script
+  rm -f $script
+}
+
+function gdb_threads() {
+  if [[ $# -ne 1 ]]; then
+     echo "Usage: gdb_threads <pid>"
+     return
+  fi
+
+  script=/tmp/$$.$RANDOM.gdb
+  cat <<_END_ > $script
+set pagination off
+info threads
+detach
+quit
+_END_
+
+  gdb -pid $1 -batch -x $script
+  rm -f $script
+}
+
+function java_threads {
+  if [[ $# -ne 1 ]]; then
+     echo "Usage: java_threads <pid>"
+     return
+  fi
+  gdb_threads $1 | grep 'main -'
+}
+
+function f() {
+   find . -name "$1" -print
+}
+
+function time2str() {
+   perl -e 'use POSIX qw(strftime); print strftime("%Y.%m.%d %H:%M:%S\n", localtime($ARGV[0]))' $(echo $1 | cut -c 1-10)
+}
+
+# find a class in a list of .jar files
+function findjar() {
+   if [[ $# -ne 1 ]]; then
+      echo "Usage: findjar <class>"
+      return
+   fi
+
+   for i in *.jar; do 
+      jar -tvf $i | grep $1 >/dev/null 
+      if [ $? -eq 0 ]; then 
+         echo "$i:" 
+         jar -tvf $i | grep $1
+      fi
+   done
+}
+
+function jarmaj() {
+   if [[ $# -ne 1 ]]; then
+      echo "Usage: jarmaj <jar-file>"
+      return
+   fi
+
+   jar -tvf $1 | grep '\.class' | head -1 | awk '{print $NF}' | xargs unzip -q -c $1 | \
+      tail -c +7 | head -c 2 | asc2hex | hex2dec
+}
+
+function dotfiles() {
+   tar -C ~ -czf dotfiles.tar.gz .vimrc .aliases .aliases_loc .funcs .funcs_loc .zshrc .xmobarrc .xmonad/xmonad.hs
+}
+
+function payloads() {
+   if [[ $# -ne 1 ]]; then
+      echo "Usage: payloads <pcap-file>"
+      return
+   fi  
+
+   if [[ -f $1 ]]; then
+      python -c "
+from scapy.all import *; from sys import argv
+for (p,n) in filter(lambda p: not isinstance(p[0][TCP].payload, Padding), (lambda p: zip(p, range(len(p))))(rdpcap(argv[1]))):
+   with open('{}.{}'.format(argv[1], n), 'wb') as f:
+      f.write(p[TCP].payload.__str__())" $1
+   fi  
+}
+
+function pynslookup() {
+   if [[ $# -ne 1 ]]; then
+      echo "Usage: pynslookup <hostname>"
+      return
+   fi
+
+   python -c "
+import dns.resolver
+import sys
+try:
+   answers = dns.resolver.query('$1', 'A')
+   sys.stdout.write((answers.rrset.items[0].address if not answers is None else '') + '\n')
+except Exception as e:
+   pass
+"
+}
+
+function swatch() {
+   if [[ $# -eq 1 ]]; then
+      file=$1
+      interval=1
+   elif [[ $# -eq 2 ]]; then
+      file=$1
+      interval=$2
+   else
+      echo "Usage: swatch <file> [ <interval> ]"
+      return
+   fi  
+
+   if [ ! -f "$file" ]; then
+      echo "$file doesn't exist"
+      return
+   fi  
+
+   unset ini_size
+   unset last_size
+   elapsed=0
+
+   while true; do  
+      size=$(ls -l $file 2>/dev/null | cut -d' ' -f5)
+
+      if [ ! -f "$file" ]; then
+         return
+      fi  
+
+      if [[ -z $ini_size ]]; then 
+         ini_size=$size
+      fi  
+
+      if [[ $elapsed -gt 0 ]]; then 
+         echo $size " / " $(bc <<<$size-$old_size) " / " $(bc <<<($size-$ini_size)/$elapsed/$interval)"/s"
+      fi  
+
+      old_size=$size
+      sleep $interval
+      elapsed=$((elapsed + $interval))
+   done
+}
+
+function reorder_cols() {
+   # Reorders columns in a delimited file. Expects a comma-separated list of fields 
+   # for the current (from) and for the new (to) ordering. The actual field names
+   # have no meaning, but for ease of use a CSV header may be used.
+
+   local from
+   local to
+   local delim=","
+
+   while getopts ":f:t:d:" opt; do
+      case $opt in
+         f)
+            from="$OPTARG"
+            ;;
+         t)
+            to="$OPTARG"
+            ;;
+         d)
+            delim="$OPTARG"
+            ;;
+         \?)
+            echo "Usage: $0 -f <from> -t <to> [-d <delimiter>]" >&2
+            return
+      esac
+   done
+
+   if [[ -z "$from" || -z "$to" ]]; then
+      echo "Usage: $0 -f <from> -t <to> [-d <delimiter>]" >&2
+      return
+   fi
+
+   awk -v from="$from" -v to="$to" -F "$delim" ' 
+   BEGIN { 
+      split(from, from_a, ",")
+      split(to, to_a, ",")
+
+      for (f in from_a) {
+         from_d[from_a[f]] = f
+      }
+
+      for (i = 1; i <= length(to_a); i++) {
+         pos[i] = from_d[to_a[i]]
+      }
+   }
+
+   {
+      line = ""
+
+      for (i = 1; i <= length(pos); i++) {
+         if (i == 1) {
+            printf("%s", $pos[i]) 
+         } else {
+            printf("%s%s", FS, $pos[i]) 
+         }
+      }
+
+      printf("\n")
+   }'
+}
+
+# Substitute password placeholders %[<password-id>]% in a file with the respective password
+function sub_pass {
+	sed "/^.*%\[\(.*\)\]%.*$/{h; s//pass \1/e; x; G; s/^\(.*\)%\[\(.*\)\]%\(.*\)\n\(.*\)$/\1\4\3/ }" <$1
+}
