@@ -405,5 +405,24 @@ function reorder_cols() {
 
 # Substitute password placeholders %[<password-id>]% in a file with the respective password
 function sub_pass {
-	sed "/^.*%\[\(.*\)\]%.*$/{h; s//pass \1/e; x; G; s/^\(.*\)%\[\(.*\)\]%\(.*\)\n\(.*\)$/\1\4\3/ }" <$1
+   sed "/^.*%\[\(.*\)\]%.*$/{h; s//pass \1/e; x; G; s/^\(.*\)%\[\(.*\)\]%\(.*\)\n\(.*\)$/\1\4\3/ }" <$1
+}
+
+function vcsh-enable {
+   vcsh_modules=$((ls -1 .config/mr/available.d; ls -1 .config/mr/config.d) | sort | uniq -u | xargs -n 1 basename -s .vcsh)
+
+   if [[ $# -eq 0 ]]; then
+      echo "Available modules:\n\n${vcsh_modules}"
+      return 0
+   fi
+
+   module=$1
+
+   echo $vcsh_modules | grep ^$module$ >/dev/null
+
+   if [[ $? -eq 0 ]]; then
+      ln -s ~/.config/mr/available.d/$module.vcsh ~/.config/mr/config.d/$module.vcsh 
+   else
+      echo "Unknown module: $module"
+   fi
 }
