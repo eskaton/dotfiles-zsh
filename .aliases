@@ -1,3 +1,16 @@
+if [ $(uname) = "FreeBSD" ]; then
+   vimdir=$(ls -1dr /usr/local/share/vim/vim[0-9]* | head -1)
+
+   alias ls='ls -G'
+elif [ $(uname) = "Linux" ]; then
+   vimdir=$(ls -1dr /usr/share/vim/vim[0-9]* | head -1)
+
+   alias ls='ls --color'
+   alias watchf='iwatch -e all_events '
+   alias execnr='setarch i386 -RL '
+   alias bat='batcat'
+fi
+
 alias d='dirs -v | tail +2'
 for index ({1..9}) alias "$index"="cd +${index}"; unset index
 
@@ -29,15 +42,3 @@ alias pem2der='openssl x509 -inform PEM -outform DER -in '
 alias der2pem='openssl x509 -inform DER -outform PEM -in '
 alias aiff2mp3='find . -name "*.aiff" -exec basename {} ".aiff" \; | tr "\012" "\000" | xargs -0 -I{} -0 ffmpeg -i {}.aiff -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 {}.mp3'
 alias octave='octave --force-gui'
-
-if [ $(uname) = "FreeBSD" ]; then
-   vimdir=$(ls -1dr /usr/local/share/vim/vim[0-9]* | head -1)
-
-   alias ls='ls -G'
-elif [ $(uname) = "Linux" ]; then
-   vimdir=$(ls -1dr /usr/share/vim/vim[0-9]* | head -1)
-
-   alias ls='ls --color'
-   alias watchf='iwatch -e all_events '
-   alias execnr='setarch i386 -RL '
-fi

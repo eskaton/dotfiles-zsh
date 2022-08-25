@@ -4,7 +4,7 @@ SAVEHIST=1000000
 
 zstyle :compinstall filename '~/.zshrc'
 
-fpath+=~/.zsh
+fpath+=(~/.zsh/config ~/.zsh/completions)
 
 autoload -Uz prompt; prompt
 autoload -Uz cursor-mode; cursor-mode
