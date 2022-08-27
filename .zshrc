@@ -9,6 +9,7 @@ fpath+=(~/.zsh/config ~/.zsh/completions)
 autoload -Uz prompt; prompt
 autoload -Uz cursor-mode; cursor-mode
 autoload -Uz text-objects; text-objects
+autoload -Uz colored-man-pages; colored-man-pages
 autoload -Uz bd; bd 2>/dev/null
 autoload -Uz compinit; compinit
 
@@ -20,6 +21,10 @@ setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_SILENT
 
+# Remove '/' from WORDCHARS. This allows us to use 'forward-word' and 
+# 'backward-kill-word' to partially complete autosuggested paths
+export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
 autoload -U colors && colors
 autoload edit-command-line
 zle -N edit-command-line
@@ -28,12 +33,14 @@ zmodload zsh/complist
 
 bindkey -v
 bindkey -M vicmd v edit-command-line
-bindkey '^ ' autosuggest-accept
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect '^xi' vi-insert
+bindkey '^ ' autosuggest-accept
+bindkey '^n' forward-word
+bindkey '^p' backward-kill-word
 
 export TERM=xterm-256color
 export LSCOLORS=Exfxcxdxbxegedabagacad
@@ -58,35 +65,24 @@ zstyle ':completion:*:warnings' format ' %F{red}-- no matches found --%f'
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 if [[ $(uname) = "FreeBSD" ]]; then
-   if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-      . /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-   fi
+   modules_loc=/usr/local/share
 elif [[ $(uname) = "Linux" ]]; then
-   if [[ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-      . /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-   fi
+   modules_loc=/usr/share
 fi
 
-if [ -f ~/.env ]; then
-   # source environment specific to this machine
-   . ~/.env
+if [[ -f ${modules_loc}/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+   . ${modules_loc}/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
-if [ -f ~/.aliases ]; then
-   . ~/.aliases
+if [[ -f ${modules_loc}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+   . ~/.zsh/themes/eskaton
+   . ${modules_loc}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
-if [ -f ~/.aliases_loc ]; then
-   # source aliases specific to this machine
-   . ~/.aliases_loc
-fi
+[[ -f ~/.aliases ]] && . ~/.aliases
+[[ -f ~/.funcs ]] && . ~/.funcs
 
-if [ -f ~/.funcs ]; then
-   . ~/.funcs
-fi
-
-if [ -f ~/.funcs_loc ]; then
-   # source functions specific to this machine
-   . ~/.funcs_loc
-fi
-
+# source environment specific to this machine
+[[ -f ~/.env ]] && . ~/.env
+[[ -f ~/.aliases_loc ]] && . ~/.aliases_loc
+[[ -f ~/.funcs_loc ]] && . ~/.funcs_loc
