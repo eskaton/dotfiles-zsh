@@ -2,6 +2,8 @@ if [ $(uname) = "FreeBSD" ]; then
    vimdir=$(ls -1dr /usr/local/share/vim/vim[0-9]* | head -1)
 
    alias ls='ls -G'
+   alias cdeject="cdcontrol eject"
+   alias cdclose="cdcontrol close"
 elif [ $(uname) = "Linux" ]; then
    vimdir=$(ls -1dr /usr/share/vim/vim[0-9]* | head -1)
 

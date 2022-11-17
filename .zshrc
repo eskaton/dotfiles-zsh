@@ -79,6 +79,10 @@ if [[ -f ${modules_loc}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; 
    . ${modules_loc}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
+if [[ -f ~/.zsh/plugins/fzf-history-search/fzf-history-search.zsh ]]; then
+   . ~/.zsh/plugins/fzf-history-search/fzf-history-search.zsh
+fi
+
 [[ -f ~/.aliases ]] && . ~/.aliases
 [[ -f ~/.funcs ]] && . ~/.funcs
 
