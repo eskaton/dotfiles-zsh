@@ -4,7 +4,7 @@ SAVEHIST=1000000
 
 zstyle :compinstall filename '~/.zshrc'
 
-fpath+=(~/.zsh/config ~/.zsh/completions)
+fpath+=(~/.zsh/config ~/.zsh/completions ~/.zsh/plugins)
 
 autoload -Uz prompt; prompt
 autoload -Uz cursor-mode; cursor-mode
@@ -20,6 +20,7 @@ setopt PROMPT_SUBST
 setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_SILENT
+setopt SHARE_HISTORY
 
 # Remove '/' from WORDCHARS. This allows us to use 'forward-word' and 
 # 'backward-kill-word' to partially complete autosuggested paths
@@ -28,6 +29,7 @@ export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 autoload -U colors && colors
 autoload edit-command-line
 zle -N edit-command-line
+zle -N autosuggest-accept
 
 zmodload zsh/complist
 
@@ -80,6 +82,7 @@ if [[ -f ${modules_loc}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; 
 fi
 
 if [[ -f ~/.zsh/plugins/fzf-history-search/fzf-history-search.zsh ]]; then
+   export ZSH_FZF_HISTORY_SEARCH_REMOVE_DUPLICATES=1
    . ~/.zsh/plugins/fzf-history-search/fzf-history-search.zsh
 fi
 
