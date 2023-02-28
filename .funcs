@@ -21,30 +21,30 @@ sys.stdout.write(md5.md5(sys.stdin.read().rstrip('\n')).digest())"
 function b64enc() {
    if [[ -n $1 ]]; then
       echo $1 |\
-   python -c "
+   python3 -c "
 import sys
 import base64
-print base64.b64encode(sys.stdin.read().rstrip('\n'))"
+print(base64.b64encode(sys.stdin.read().rstrip('\n')))"
    else
-   python -c "
+   python3 -c "
 import sys
 import base64
-print base64.b64encode(sys.stdin.read().rstrip('\n'))"
+print(base64.b64encode(sys.stdin.read().rstrip('\n')))"
    fi
 }
 
 function b64dec() {
    if [[ -n $1 ]]; then
       echo $1 |\
-   python -c "
+   python3 -c "
 import sys
 import base64
-print base64.b64decode(sys.stdin.read())"
+print(base64.b64decode(sys.stdin.read()))"
    else
-   python -c "
+   python3 -c "
 import sys
 import base64
-print base64.b64decode(sys.stdin.read())"
+print(base64.b64decode(sys.stdin.read()))"
    fi
 }
 
