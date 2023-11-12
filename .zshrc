@@ -86,6 +86,10 @@ if [[ -f ~/.zsh/plugins/fzf-history-search/fzf-history-search.zsh ]]; then
    . ~/.zsh/plugins/fzf-history-search/fzf-history-search.zsh
 fi
 
+for f in ~/.zsh/alias/*; do 
+   . $f
+done
+
 [[ -f ~/.aliases ]] && . ~/.aliases
 [[ -f ~/.funcs ]] && . ~/.funcs
 

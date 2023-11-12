@@ -1,0 +1,38 @@
+alias k="https_proxy= HTTPS_PROXY= kubectl"
+
+alias kaf="k apply -f"
+alias kak="k apply -k"
+alias kdf="k delete -f"
+
+for verb in get/g describe/d delete/r; do
+   cmd=${verb%/*}
+   cabrv=${verb#*/}
+
+   eval "alias k${cabrv}='k $cmd'"
+
+   for resource in pod service ingress deployment ${x%/*}${x%/*}; do
+      rabrv=${resource[1]}
+
+      eval "alias k${cabrv}${rabrv}='k $cmd $resource'"
+      eval "alias k${cabrv}${rabrv}a='k $cmd $resource --all-namespaces'"
+      eval "alias k${cabrv}${rabrv}n='k $cmd $resource -n'"
+   done
+done
+
+alias kgpf='k get pods -o=custom-columns=NAME:.metadata.name,IP:.status.podIP,NODE:.spec.nodeName --sort-by .spec.nodeName'
+alias kgpaf='k get pods --all-namespaces -o=custom-columns=NAME:.metadata.name,IP:.status.podIP,NODE:.spec.nodeName --sort-by .spec.nodeName'
+
+alias kge='k get events'
+
+alias kgn='k get nodes'
+alias kdn='k describe node'
+
+alias kl='k logs'
+alias klf='k logs --follow'
+alias kln='k logs -n'
+alias klnf='k logs --follow -n'
+
+alias keit='k exec -it'
+
+alias kctx='k ctx'
+alias kns='k ns'
