@@ -10,7 +10,7 @@ for verb in get/g describe/d delete/r; do
 
    eval "alias k${cabrv}='k $cmd'"
 
-   for resource in pod service ingress deployment ${x%/*}${x%/*}; do
+   for resource in pod service ingress deployment; do
       rabrv=${resource[1]}
 
       eval "alias k${cabrv}${rabrv}='k $cmd $resource'"
