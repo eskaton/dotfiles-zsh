@@ -45,3 +45,6 @@ alias aiff2mp3='find . -name "*.aiff" -exec basename {} ".aiff" \; | tr "\012" "
 alias octave='octave --force-gui'
 alias emacs='emacs --with-profile default --no-splash'
 alias spacemacs='emacs --with-profile spacemacs'
+
+alias m=milenaw
+alias kc=kcctlw

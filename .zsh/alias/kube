@@ -1,4 +1,5 @@
 alias k="https_proxy= HTTPS_PROXY= kubectl"
+alias ks="https_proxy= HTTPS_PROXY= kubeseal"
 
 alias kaf="k apply -f"
 alias kak="k apply -k"
@@ -10,7 +11,7 @@ for verb in get/g describe/d delete/r; do
 
    eval "alias k${cabrv}='k $cmd'"
 
-   for resource in pod service ingress deployment; do
+   for resource in pod service ingress deployment job certificate; do
       rabrv=${resource[1]}
 
       eval "alias k${cabrv}${rabrv}='k $cmd $resource'"
