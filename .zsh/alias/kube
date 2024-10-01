@@ -1,5 +1,7 @@
 alias k="https_proxy= HTTPS_PROXY= kubectl"
 alias ks="https_proxy= HTTPS_PROXY= kubeseal"
+alias helm="https_proxy= HTTPS_PROXY= helm"
+alias helmfile="https_proxy= HTTPS_PROXY= helmfile"
 
 alias kaf="k apply -f"
 alias kak="k apply -k"
@@ -37,3 +39,6 @@ alias keit='k exec -it'
 
 alias kctx='k ctx'
 alias kns='k ns'
+
+alias kga='k api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found'
+alias kgan='kga -n'

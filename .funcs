@@ -48,12 +48,12 @@ function b64dec() {
    python3 -c "
 import sys
 import base64
-print(base64.b64decode(sys.stdin.read()))"
+print(base64.b64decode(sys.stdin.read()).decode())"
    else
    python3 -c "
 import sys
 import base64
-print(base64.b64decode(sys.stdin.read()))"
+print(base64.b64decode(sys.stdin.read()).decode())"
    fi
 }
 
@@ -414,5 +414,5 @@ function reorder_cols() {
 
 # Substitute password placeholders %[<password-id>]% in a file with the respective password
 function sub_pass {
-   sed "/^.*%\[\(.*\)\]%.*$/{h; s//pass \1/e; x; G; s/^\(.*\)%\[\(.*\)\]%\(.*\)\n\(.*\)$/\1\4\3/ }" <$1
+   sed "/^.*%\[\(.*\)\]%.*$/{h; s//pass \1/e; s/^\(.*\)\n.*$/\1/; x; G; s/^\(.*\)%\[\(.*\)\]%\(.*\)\n\(.*\)$/\1\4\3/ }" <$1
 }
