@@ -58,6 +58,8 @@ function colored() {
   # Prefer `less` whenever available, since we specifically configured
   # environment for it.
   environment+=( PAGER="${commands[less]:-$PAGER}" )
+  environment+=( GROFF_NO_SGR=1 )
+  environment+=( MAN_KEEP_FORMATTING=1 )
 
   # See ./nroff script.
   if [[ "$OSTYPE" = solaris* ]]; then
@@ -71,5 +73,5 @@ function colored() {
 function man \
   dman \
   debman {
-  colored $0 "$@"
+  colored $0 "$@" | less -R -s -M +Gg
 }

@@ -158,14 +158,18 @@ prompt_setup() {
    ZSH_THEME_GIT_PROMPT_AHEAD="%B%F{green}%f%b"
    ZSH_THEME_GIT_PROMPT_BEHIND_AHEAD="%B%F{#964B00}ﬡ%f%b"
 
-   prompt_git_branch
+   if [[ -o interactive ]]; then
+      prompt_git_branch
 
-   if [[ -n "$INSIDE_EMACS" ]]; then
-      RPROMPT=""
-      PROMPT='%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%F{yellow}$(git branch --show-current 2>/dev/null | sed "s/.*/(@&) /")%f%{%B%F{$pscolor}%}%n@%m:%.> %{%b%f%}%'
-   else
-      RPROMPT='$(prompt_git_info) $(git_prompt_status)'
-      PROMPT='%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{%B%F{$pscolor}%}%n@%m:%.>%{%b%f%}%  '
+      if [[ -n "$INSIDE_EMACS" ]]; then
+         RPROMPT=""
+         PROMPT='%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%F{yellow}$(git branch --show-current 2>/dev/null | sed "s/.*/(@&) /")%f%{%B%F{$pscolor}%}%n@%m:%.> %{%b%f%}%'
+      else
+         RPROMPT='$(prompt_git_info) $(git_prompt_status)'
+         PROMPT='%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{%B%F{$pscolor}%}%n@%m:%.>%{%b%f%}%  '
+      fi
+   else 
+      RPROMPT=''
    fi
 }
 
