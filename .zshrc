@@ -12,6 +12,7 @@ autoload -Uz text-objects; text-objects
 autoload -Uz colored-man-pages; colored-man-pages
 autoload -Uz bd; bd 2>/dev/null
 autoload -Uz compinit; compinit
+autoload -Uz term-title; term-title
 
 setopt EXTENDED_GLOB
 setopt HIST_IGNORE_SPACE

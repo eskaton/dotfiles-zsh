@@ -1,0 +1,21 @@
+# Hook to update the xterm title before each prompt is displayed
+function precmd() {
+   local git_top git_branch proj title
+
+   if git_top=$(git rev-parse --show-toplevel 2>/dev/null); then
+      # if in a git repo, use its name ...
+      proj=${git_top:t}
+      
+      if git_branch=$(git branch --show-current 2>/dev/null); then
+         title="$proj ($git_branch)"
+      else
+	 title="$proj"
+      fi
+   else
+      # ... else use the current directory
+      title=${PWD:t}
+   fi
+
+   # Set xterm title
+   print -Pn "\e]0;$title\a"
+}
